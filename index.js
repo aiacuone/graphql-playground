@@ -1,7 +1,7 @@
-const express = require('express');
-const { graphqlHTTP } = require('express-graphql');
-const { buildSchema } = require('graphql');
-const cors = require('cors');
+const express = require('express')
+const { graphqlHTTP } = require('express-graphql')
+const { buildSchema } = require('graphql')
+const cors = require('cors')
 
 // Define a GraphQL schema with a Person type
 const schema = buildSchema(`
@@ -22,7 +22,7 @@ const schema = buildSchema(`
   type Query {
     person(id: ID!): Person
   }
-`);
+`)
 
 // Sample data
 const peopleData = [
@@ -48,16 +48,16 @@ const peopleData = [
       country: 'Imaginaria',
     },
   },
-];
+]
 
 // Root resolver
 const root = {
   person: ({ id }) => peopleData.find((p) => p.id === id),
-};
+}
 
-const app = express();
+const app = express()
 
-app.use(cors());
+app.use(cors())
 
 app.use(
   '/graphql',
@@ -66,9 +66,9 @@ app.use(
     rootValue: root,
     graphiql: true, // Enable GraphiQL UI for easy exploration
   })
-);
+)
 
-const PORT = 4000;
+const PORT = 4000
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/graphql`);
-});
+  console.log(`Server running at http://localhost:${PORT}/graphql`)
+})
