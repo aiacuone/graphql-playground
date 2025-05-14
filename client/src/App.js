@@ -20,6 +20,10 @@ const PERSON_FRAGMENT = gql`
     name
     email
     age
+    address {
+      city
+      country
+    }
   }
 `
 
@@ -28,10 +32,15 @@ const GET_PERSON = gql`
   query GetPerson($id: ID!) {
     person(id: $id) {
       ...personFields
-      address {
-        city
-        country
-      }
+    }
+  }
+`
+
+const GET_ALL_PEOPLE = gql`
+  ${PERSON_FRAGMENT}
+  query GetAllPeople {
+    people {
+      ...personFields
     }
   }
 `
@@ -53,12 +62,53 @@ function Person({ id }) {
   )
 }
 
+function PeopleList() {
+  const { loading, error, data } = useQuery(GET_ALL_PEOPLE)
+  if (loading) return <p>Loading...</p>
+  if (error) return <p>Error: {error.message}</p>
+
+  return (
+    <div>
+      <h2>All People</h2>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+          gap: '1rem',
+        }}
+      >
+        {data.people.map((person) => (
+          <div
+            key={person.id}
+            style={{
+              border: '1px solid #ccc',
+              padding: '1rem',
+              borderRadius: '4px',
+            }}
+          >
+            <h3>{person.name}</h3>
+            <p>Email: {person.email}</p>
+            <p>Age: {person.age}</p>
+            <p>
+              Location: {person.address.city}, {person.address.country}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function App() {
   return (
     <ApolloProvider client={client}>
       <div className="App">
         <h1>GraphQL Person Query with Fragment</h1>
-        <Person id="1" />
+        <div style={{ marginBottom: '2rem' }}>
+          <h2>Single Person</h2>
+          <Person id="1" />
+        </div>
+        <PeopleList />
       </div>
     </ApolloProvider>
   )

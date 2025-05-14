@@ -21,6 +21,7 @@ const schema = buildSchema(`
 
   type Query {
     person(id: ID!): Person
+    people: [Person]
   }
 `)
 
@@ -53,6 +54,7 @@ const peopleData = [
 // Root resolver
 const root = {
   person: ({ id }) => peopleData.find((p) => p.id === id),
+  people: () => peopleData,
 }
 
 const app = express()
